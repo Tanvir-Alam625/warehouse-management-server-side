@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 require("dotenv").config();
@@ -17,24 +17,25 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-// client.connect((err) => {
-//   const collection = client.db("stoneDBS").collection("stoneCollection");
-//   // perform actions on the collection object
-//   console.log("db connected");
-//   // client.close();
-// });
-
 // mongoDB connection
 const run = async () => {
   try {
     await client.connect();
     const stoneCollection = client.db("stoneDBS").collection("stoneCollection");
-    app.get("/stones", async (req, res) => {
+    // load six api data
+    app.get("/stonesHomePage", async (req, res) => {
       const query = {};
       const cursor = stoneCollection.find(query);
-      const stones = await cursor.toArray();
+      const stones = await cursor.limit(6).toArray();
       res.send(stones);
       // console.log(stoneCollection);
+    });
+    // load one api data
+    app.get("/inventoryDetail/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const stone = await stoneCollection.findOne(query);
+      res.send(stone);
     });
   } finally {
     // nothing
