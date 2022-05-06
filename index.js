@@ -32,6 +32,28 @@ const run = async () => {
       res.send(stones);
       // console.log(stoneCollection);
     });
+    // Count all Stone
+    app.get("/countData", async (req, res) => {
+      const count = await stoneCollection.estimatedDocumentCount();
+      res.json(count);
+    });
+    // load inventory all api data
+    app.get("/inventory", async (req, res) => {
+      const page = parseInt(req.query.page);
+      // console.log(query);
+      const query = {};
+      const cursor = stoneCollection.find(query);
+      let stones;
+      if (page) {
+        stones = await cursor
+          .skip(page * 10)
+          .limit(10)
+          .toArray();
+      } else {
+        stones = await cursor.limit(10).toArray();
+      }
+      res.send(stones);
+    });
     // load one api data
     app.get("/inventoryDetail/:id", async (req, res) => {
       const id = req.params.id;
@@ -40,7 +62,25 @@ const run = async () => {
       res.send(stone);
     });
     //delivered api data
-    app.put("/inventoryDetail/:id", async (req, res) => {
+    app.put("/delivery/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateStone = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          quantity: updateStone.quantity,
+        },
+      };
+      const result = await stoneCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+    // set Quantity api data
+    app.put("/setQuantity/:id", async (req, res) => {
       const id = req.params.id;
       const updateStone = req.body;
       const filter = { _id: ObjectId(id) };
