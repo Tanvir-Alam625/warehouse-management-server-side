@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const { query } = require("express");
+const { response } = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -36,6 +38,24 @@ const run = async () => {
       const query = { _id: ObjectId(id) };
       const stone = await stoneCollection.findOne(query);
       res.send(stone);
+    });
+    //delivered api data
+    app.put("/inventoryDetail/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateStone = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          quantity: updateStone.quantity,
+        },
+      };
+      const result = await stoneCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
     });
   } finally {
     // nothing
