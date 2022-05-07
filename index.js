@@ -7,8 +7,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 require("dotenv").config();
-// 5EsP2pIrpuhJFX9G
-//stoneDB
+
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -110,6 +109,12 @@ const run = async () => {
       const query = { _id: ObjectId(id) };
       const stone = await stoneCollection.deleteOne(query);
       res.send(stone);
+    });
+    //add api data for client site
+    app.post("/AddStone", async (req, res) => {
+      const stone = req.body;
+      const result = await stoneCollection.insertOne(stone);
+      res.send(result);
     });
   } finally {
     // nothing
