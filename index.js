@@ -37,7 +37,7 @@ const run = async () => {
       const count = await stoneCollection.estimatedDocumentCount();
       res.json(count);
     });
-    // load inventory all api data
+    // load inventory all api data with pagination
     app.get("/inventory", async (req, res) => {
       const page = parseInt(req.query.page);
       // console.log(query);
@@ -96,6 +96,20 @@ const run = async () => {
         options
       );
       res.send(result);
+    });
+    //API--- data load for manageInventory
+    app.get("/manageInventory", async (req, res) => {
+      const query = {};
+      const cursor = stoneCollection.find(query);
+      const stones = await cursor.toArray();
+      res.send(stones);
+    });
+    // API--- one data delete
+    app.delete("/stone/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const stone = await stoneCollection.deleteOne(query);
+      res.send(stone);
     });
   } finally {
     // nothing
