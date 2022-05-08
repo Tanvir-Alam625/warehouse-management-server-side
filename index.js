@@ -18,6 +18,7 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+
 // mongoDB connection
 const run = async () => {
   try {
@@ -119,7 +120,6 @@ const run = async () => {
     //my items api data
     app.get("/myItem", async (req, res) => {
       const email = req.query.email;
-      console.log(email);
       const query = { email: email };
       const cursor = stoneCollection.find(query);
       const result = await cursor.toArray();
