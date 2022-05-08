@@ -116,6 +116,15 @@ const run = async () => {
       const result = await stoneCollection.insertOne(stone);
       res.send(result);
     });
+    //my items api data
+    app.get("/myItem", async (req, res) => {
+      const email = req.query.email;
+      console.log(email);
+      const query = { email: email };
+      const cursor = stoneCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
   } finally {
     // nothing
   }
