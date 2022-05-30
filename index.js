@@ -30,7 +30,6 @@ const run = async () => {
       const cursor = stoneCollection.find(query);
       const stones = await cursor.limit(6).toArray();
       res.send(stones);
-      // console.log(stoneCollection);
     });
     // Count all Stone
     app.get("/countData", async (req, res) => {
